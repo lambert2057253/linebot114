@@ -8,9 +8,9 @@ import re
 import urllib.parse
 #import EXRate
 #import news
-#import stockprice
+import stockprice
 #import Institutional_Investors
-#import stock_compare
+import stock_compare
 from msg_template import Msg_fundamental_ability
 from msg_template import Msg_Template
 from msg_template import questionnaire
@@ -18,7 +18,7 @@ from msg_template import Msg_Exrate
 from msg_template import Msg_News
 from msg_template import Msg_diagnose
 import new_famous_book
-#import Fundamental_Analysis
+import Fundamental_Analysis
 from flask import Flask, request, abort
 from linebot import (
     LineBotApi, WebhookHandler
