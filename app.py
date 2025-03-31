@@ -31,9 +31,6 @@ from linebot.models import (
 )
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
-
 app = Flask(__name__)
 
 line_bot_api = LineBotApi('USFubiBhFjmAVTGb+zaNt3T9TEi4T1ybJ2DyjmUuA8Fu3uG4leANXKsS9gThfZoor2egLCBvi2c0O7TE4lR6f9u2FvT64l5m64rr6HQ8vxd0/HukqX3bPZTRdjpIZEEUyPhITmN2K9+Z1wSMJCDG1AdB04t89/1O/w1cDnyilFU=')
