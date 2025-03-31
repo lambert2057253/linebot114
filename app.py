@@ -33,8 +33,8 @@ from linebot.models import *
 
 app = Flask(__name__)
 
-line_bot_api = LineBotApi('bP4+qoMkxVBTp/frpIaE4G1u4mvsPXWgyNIUJuIwdBqP8wHwZHTdEG64EYzgu0boK6ru/zS2n6ACBPp7XIUxlxSUHDrDfZmT2fQRHXhiLnonhByqaPilVH5ejhV2647pAZDg75xeH0mVIbN4Tkd6dQdB04t89/1O/w1cDnyilFU=')
-handler = WebhookHandler('7bf4becaf162f5e885ab92d0afa53630')
+line_bot_api = LineBotApi('USFubiBhFjmAVTGb+zaNt3T9TEi4T1ybJ2DyjmUuA8Fu3uG4leANXKsS9gThfZoor2egLCBvi2c0O7TE4lR6f9u2FvT64l5m64rr6HQ8vxd0/HukqX3bPZTRdjpIZEEUyPhITmN2K9+Z1wSMJCDG1AdB04t89/1O/w1cDnyilFU=')
+handler = WebhookHandler('5770f1983a0c5baab2e9fb4fa1cea1d6')
 my_user_id = 'Your UserID'
 line_bot_api.push_message(my_user_id, TextSendMessage(text="start"))
 @app.route("/")
