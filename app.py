@@ -6,8 +6,8 @@ import re
 #from pymongo import MongoClient
 #import pymongo
 import urllib.parse
-#import EXRate
-#import news
+import EXRate
+import news
 import stockprice
 import Institutional_Investors
 import stock_compare
