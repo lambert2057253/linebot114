@@ -9,7 +9,7 @@ import urllib.parse
 #import EXRate
 #import news
 #import stockprice
-import Institutional_Investors
+#import Institutional_Investors
 #import stock_compare
 from msg_template import Msg_fundamental_ability
 from msg_template import Msg_Template
