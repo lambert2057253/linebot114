@@ -18,7 +18,7 @@ from msg_template import Msg_Exrate
 from msg_template import Msg_News
 from msg_template import Msg_diagnose
 import new_famous_book
-import Fundamental_Analysis
+#import Fundamental_Analysis
 from flask import Flask, request, abort
 from linebot import (
     LineBotApi, WebhookHandler
