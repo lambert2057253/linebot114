@@ -274,15 +274,23 @@ def handle_message(event):
         img_url = stock_compare.show_pic(msg)
         if img_url == "no": line_bot_api.push_message(uid, TextSendMessage('股票代碼錯誤'))
         line_bot_api.push_message(uid, ImageSendMessage(original_content_url=img_url, preview_image_url=img_url))
-    elif re.match('#[0-9]', msg): #查詢某檔股票
-        stockNumber = msg[1:]
-        stockName = stockprice.get_stock_name(stockNumber)
-        if stockName == "no": line_bot_api.push_message(uid, TextSendMessage("股票代碼錯誤"))
-        else:          
-            line_bot_api.push_message(uid, TextSendMessage(f'稍等一下, 查詢編號: {tockNumber} 的股價中...'))
-            content_text = stockprice.getprice(stockNumber, msg)
-            content = Msg_Template.stock_reply(stockNumber, content_text)
-            line_bot_api.push_message(uid, content)
+    elif re.match('#[0-9]{4}', msg):  # 確保匹配4位數字的股票代碼
+        stockNumber = msg[1:]  # 去除 "#"，獲取股票代碼
+        try:
+            stockName = stockprice.get_stock_name(stockNumber)
+            if stockName == "no":
+                line_bot_api.push_message(uid, TextSendMessage("股票代碼錯誤"))
+            else:
+                line_bot_api.push_message(uid, TextSendMessage(f'稍等一下, 查詢編號: {stockNumber} 的股價中...'))
+                content_text = stockprice.getprice(stockNumber, msg)
+                # 直接使用 getprice 的回應
+                line_bot_api.push_message(uid, TextSendMessage(content_text))
+                # 如果需要額外的按鈕或菜單，可以使用 Msg_Template
+                if msg.startswith("#"):  # 如果是 "#" 開頭，提供更多選項
+                    content = Msg_Template.stock_reply_other(stockNumber)  # 假設有這個函數提供更多選項
+                    line_bot_api.push_message(uid, content)
+        except Exception as e:
+            line_bot_api.push_message(uid, TextSendMessage(f"查詢失敗，請稍後再試：{str(e)}"))
         return 0
     elif re.match("三大面向分析[0-9]", msg):
         stockNumber = msg.strip("三大面向分析")
