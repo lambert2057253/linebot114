@@ -280,6 +280,8 @@ def handle_message(event):
             line_bot_api.push_message(uid, TextSendMessage("無效的股票代碼格式"))
             return 0
         print(f"處理的股票代碼: {stockNumber}, 完整消息: {msg}")  # 添加日誌
+        print(f"處理的股票代碼類型: {type(stockNumber)}, 值: {stockNumber}")
+        print(f"完整消息類型: {type(msg)}, 值: {msg}")
         try:
             stockName = stockprice.get_stock_name(stockNumber)
             print(f"股票名稱: {stockName}")  # 添加日誌
