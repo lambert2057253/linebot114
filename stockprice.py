@@ -23,7 +23,12 @@ emoji_downinfo = u'\U0001F60A'
 # 使用 Yahoo Finance API 獲取股票名稱
 def get_stock_name(stockNumber):
     url = f"https://query1.finance.yahoo.com/v7/finance/quote?symbols={stockNumber}.TW"
-    headers = {"User-Agent": "Mozilla/5.0"}
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+        "Accept": "application/json, text/plain, */*",
+        "Accept-Language": "zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7",
+        "Referer": "https://finance.yahoo.com/"
+    }
 
     print(f"正在查詢股票: {stockNumber}.TW，URL: {url}")  # 添加日誌
 
@@ -54,7 +59,6 @@ def get_stock_name(stockNumber):
     except Exception as e:
         print(f"其他錯誤: {e}")
         return "no"
-
 # 使用者查詢股票
 def getprice(stockNumber, msg):
     stock_name = get_stock_name(stockNumber)
