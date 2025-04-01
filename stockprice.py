@@ -84,66 +84,64 @@ def getprice(stockNumber, msg):
 
 # --------- 畫近一年股價走勢圖
 def stock_trend(stockNumber, msg):
-    stock_name = get_stock_name(stockNumber)
+    stock = yf.Ticker(stockNumber + ".TW")
     end = datetime.datetime.now()
-    date = end.strftime("%Y%m%d")
-    year = str(int(date[0:4]) - 1)
-    month = date[4:6]
-    stock = pdr.DataReader(stockNumber+'.TW', 'yahoo', start= year+"-"+month,end=end)
+    start = end - datetime.timedelta(days=365)  # 設定一年內的資料
+    stock_data = stock.history(start=start, end=end)
+
     plt.figure(figsize=(12, 6))
-    plt.plot(stock["Close"], '-' , label="收盤價")
-    plt.plot(stock["High"], '-' , label="最高價")
-    plt.plot(stock["Low"], '-' , label="最低價")
-    plt.title(stock_name + '  收盤價年走勢',loc='center', fontsize=20, fontproperties=font_path)# loc->title的位置
+    plt.plot(stock_data["Close"], '-', label="收盤價")
+    plt.plot(stock_data["High"], '-', label="最高價")
+    plt.plot(stock_data["Low"], '-', label="最低價")
+    plt.title(stockNumber + ' 收盤價年走勢', loc='center', fontsize=20, fontproperties=font_path)
     plt.xlabel('日期', fontsize=20, fontproperties=font_path)
     plt.ylabel('價格', fontsize=20, fontproperties=font_path)
-    plt.grid(True, axis='y') # 網格線
+    plt.grid(True, axis='y')
     plt.legend(fontsize=14, prop=font_path)
-    plt.savefig(msg + '.png') #存檔
+    plt.savefig(msg + '.png')  # 存檔
     plt.show()
     plt.close() 
     return Imgur.showImgur(msg)
 
-#股票收益率: 代表股票在一天交易中的價值變化百分比
+# --------- 股票收益率: 代表股票在一天交易中的價值變化百分比
 def show_return(stockNumber, msg):
-    stock_name = get_stock_name(stockNumber)
+    stock = yf.Ticker(stockNumber + ".TW")
     end = datetime.datetime.now()
-    date = end.strftime("%Y%m%d")
-    year = str(int(date[0:4]) - 1)
-    month = date[4:6]
-    stock = pdr.DataReader(stockNumber + '.TW', 'yahoo', start= year+"-"+month,end=end)
-    stock['Returns'] = stock['Close'].pct_change()
-    stock_return = stock['Returns'].dropna()
+    start = end - datetime.timedelta(days=365)  # 設定一年內的資料
+    stock_data = stock.history(start=start, end=end)
+
+    stock_data['Returns'] = stock_data['Close'].pct_change()
+    stock_return = stock_data['Returns'].dropna()
+
     plt.figure(figsize=(12, 6))
     plt.plot(stock_return, label="報酬率")
-    plt.title(stock_name + '  年收益率走勢',loc='center', fontsize=20, fontproperties=font_path)# loc->title的位置
+    plt.title(stockNumber + ' 年收益率走勢', loc='center', fontsize=20, fontproperties=font_path)
     plt.xlabel('日期', fontsize=20, fontproperties=font_path)
     plt.ylabel('報酬率', fontsize=20, fontproperties=font_path)
-    plt.grid(True, axis='y') # 網格線
+    plt.grid(True, axis='y')
     plt.legend(fontsize=14, prop=font_path)
-    plt.savefig(msg+'.png') #存檔
+    plt.savefig(msg + '.png')  # 存檔
     plt.show()
+    plt.close()
     return Imgur.showImgur(msg)
 
-# --------- 畫  股價震盪圖
+# --------- 畫股價震盪圖
 def show_fluctuation(stockNumber, msg):
-    stock_name = get_stock_name(stockNumber)
+    stock = yf.Ticker(stockNumber + ".TW")
     end = datetime.datetime.now()
-    date = end.strftime("%Y%m%d")
-    year = str(int(date[0:4]) - 1)
-    month = date[4:6]
-    stock = pdr.DataReader(stockNumber + '.TW', 'yahoo', start= year+"-"+month,end=end)
-    stock['stock_fluctuation'] = stock["High"] - stock["Low"]
-    max_value = max(stock['stock_fluctuation'][:]) # 最大價差
-    min_value = min(stock['stock_fluctuation'][:]) # 最小價差
+    start = end - datetime.timedelta(days=365)  # 設定一年內的資料
+    stock_data = stock.history(start=start, end=end)
+
+    stock_data['stock_fluctuation'] = stock_data["High"] - stock_data["Low"]
+
     plt.figure(figsize=(12, 6))
-    plt.plot(stock['stock_fluctuation'], '-' , label="波動度", color="orange")
-    plt.title(stock_name + '  收盤價年波動度',loc='center', fontsize=20, fontproperties=font_path)# loc->title的位置
+    plt.plot(stock_data['stock_fluctuation'], '-', label="波動度", color="orange")
+    plt.title(stockNumber + ' 收盤價年波動度', loc='center', fontsize=20, fontproperties=font_path)
     plt.xlabel('日期', fontsize=20, fontproperties=font_path)
     plt.ylabel('價格', fontsize=20, fontproperties=font_path)
-    plt.grid(True, axis='y') # 網格線
-    plt.legend(fontsize=14, prop= font_path)
-    plt.savefig(msg + '.png') #存檔
+    plt.grid(True, axis='y')
+    plt.legend(fontsize=14, prop=font_path)
+    plt.savefig(msg + '.png')  # 存檔
     plt.show()
-    plt.close() 
+    plt.close()
     return Imgur.showImgur(msg)
