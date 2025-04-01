@@ -38,6 +38,8 @@ def get_stock_name(stockNumber):
         
 # 使用者查詢股票
 def getprice(stockNumber, msg):
+    print(f"接收的 stockNumber 類型: {type(stockNumber)}, 值: {stockNumber}")
+    print(f"接收的 msg 類型: {type(msg)}, 值: {msg}")
     stock_name = get_stock_name(stockNumber)
     if stock_name == "no": return "股票代碼錯誤!"
     
