@@ -27,12 +27,18 @@ def get_stock_name(stockNumber):
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
         "Accept": "application/json, text/plain, */*",
         "Accept-Language": "zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7",
-        "Referer": "https://finance.yahoo.com/"
+        "Referer": "https://finance.yahoo.com/quote/{stockNumber}.TW",
+        "Connection": "keep-alive",
+        "DNT": "1",  # 不要跟踪
+        "Cache-Control": "no-cache",
     }
 
     print(f"正在查詢股票: {stockNumber}.TW，URL: {url}")  # 添加日誌
 
     try:
+        # 添加延遲，避免過於頻繁的請求
+        time.sleep(1)
+        
         response = requests.get(url, headers=headers, timeout=10)  # 添加超時設定
         response.raise_for_status()  # 如果請求失敗，拋出異常
         data = response.json()
