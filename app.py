@@ -279,9 +279,10 @@ def handle_message(event):
         if not stockNumber:  # 如果沒有提取到數字
             line_bot_api.push_message(uid, TextSendMessage("無效的股票代碼格式"))
             return 0
-    
+        print(f"處理的股票代碼: {stockNumber}, 完整消息: {msg}")  # 添加日誌
         try:
             stockName = stockprice.get_stock_name(stockNumber)
+            print(f"股票名稱: {stockName}")  # 添加日誌
             if stockName == "no":
                 line_bot_api.push_message(uid, TextSendMessage("股票代碼錯誤"))
             else:
@@ -292,6 +293,7 @@ def handle_message(event):
                     content = Msg_Template.stock_reply_other(stockNumber)
                     line_bot_api.push_message(uid, content)
         except Exception as e:
+            print(f"錯誤詳情: {str(e)}")  # 添加詳細錯誤日誌
             line_bot_api.push_message(uid, TextSendMessage(f"查詢失敗，請稍後再試：{str(e)}"))
         return 0
     elif re.match("三大面向分析[0-9]", msg):
