@@ -23,64 +23,57 @@ emoji_midinfo = u'\U0001F538'
 emoji_downinfo = u'\U0001F60A'
 
 # 使用 Yahoo Finance API 獲取股票名稱
-''''
+'''
 def get_stock_name(stockNumber):
+    url = f"https://query1.finance.yahoo.com/v7/finance/quote?symbols={stockNumber}.TW"
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+        "Accept": "application/json, text/plain, */*",
+        "Accept-Language": "zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7",
+        "Referer": f"https://finance.yahoo.com/quote/{stockNumber}.TW",
+        "Connection": "keep-alive",
+        "DNT": "1",
+        "Cache-Control": "no-cache",
+        "Pragma": "no-cache",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-Fetch-Dest": "empty",
+        "Upgrade-Insecure-Requests": "1"
+    }
+
+    print(f"正在查詢股票: {stockNumber}.TW，URL: {url}")  # 添加日誌
+
     try:
-        stock = yf.Ticker(stockNumber + ".TW")
-        info = stock.info
-        if "shortName" in info and info["shortName"]:
-            return info["shortName"]
+        # 隨機延遲，避免被識別為機器
+        time.sleep(random.uniform(1, 3))
+        
+        response = requests.get(url, headers=headers, timeout=10)
+        response.raise_for_status()  # 如果請求失敗，拋出異常
+        data = response.json()
+
+        print(f"API 回應: {data}")  # 打印回應以調試
+
+        if "quoteResponse" in data and "result" in data["quoteResponse"]:
+            stock_info = data["quoteResponse"]["result"]
+            if stock_info and len(stock_info) > 0:
+                return stock_info[0].get("shortName", "no")
+            else:
+                print("無效的股票資訊")
+                return "no"
         else:
-            print(f"yfinance 無法獲取 {stockNumber} 的名稱")
+            print("API 回應格式錯誤")
             return "no"
-    except Exception as e:
-        print(f"yfinance 錯誤: {e}")
+
+    except requests.exceptions.RequestException as e:
+        print(f"網絡請求失敗: {e}")
         return "no"
-
-def getprice(stockNumber, msg):
-    stock_name = get_stock_name(stockNumber)
-    if stock_name == "no":
-        return "股票代碼錯誤!"
-
-    content = ""
-    stock = yf.Ticker(stockNumber + '.TW')
-    hist = stock.history(period="7d")
-
-    if hist.empty:
-        return "查無此股票代碼或 Yahoo Finance 暫時無法提供資料!"
-
-    price = hist["Close"].iloc[-1]  # 最新收盤價
-    last_price = hist["Close"].iloc[-2]  # 前一天收盤價
-    spread_price = price - last_price  # 價差
-    spread_ratio = (spread_price / last_price) * 100  # 漲跌幅
-    open_price = hist["Open"].iloc[-1]  # 開盤價
-    high_price = hist["High"].iloc[-1]  # 最高價
-    low_price = hist["Low"].iloc[-1]  # 最低價
-
-    price_five = hist["Close"].tail(5)
-    stockAverage = price_five.mean()
-    stockSTD = price_five.std()
-
-    spread_price = f"{'△' if spread_price > 0 else '▽'} {spread_price:.2f}"
-    spread_ratio = f"{'△' if spread_price > 0 else '▽'} {spread_ratio:.2f}%"
-
-    content += f"回報 {stock_name} ({stockNumber}) 的股價 {emoji_upinfo}\n"
-    content += f"--------------\n日期: {hist.index[-1].date()}\n"
-    content += f"{emoji_midinfo} 最新收盤價: {price:.2f}\n"
-    content += f"{emoji_midinfo} 開盤價: {open_price:.2f}\n"
-    content += f"{emoji_midinfo} 最高價: {high_price:.2f}\n"
-    content += f"{emoji_midinfo} 最低價: {low_price:.2f}\n"
-    content += f"{emoji_midinfo} 價差: {spread_price} 漲跌幅: {spread_ratio}\n"
-    content += f"{emoji_midinfo} 近五日平均價格: {stockAverage:.2f}\n"
-    content += f"{emoji_midinfo} 近五日標準差: {stockSTD:.2f}\n"
-    
-    if msg[0] == "#": 
-        content += f"--------------\n需要更詳細的資訊，可以點選以下選項進一步查詢唷{emoji_downinfo}"
-    else: 
-        content += '\n' 
-    
-    return content
-''''
+    except json.JSONDecodeError as e:
+        print(f"JSON 解析失敗: {e}")
+        return "no"
+    except Exception as e:
+        print(f"其他錯誤: {e}")
+        return "no"
+'''
 # 使用者查詢股票
 def getprice(stockNumber, msg):
     stock_name = get_stock_name(stockNumber)
