@@ -9,50 +9,77 @@ import numpy as np
 import pandas as pd
 import matplotlib
 import matplotlib.pyplot as plt
-import pandas_datareader as pdr
+import yfinance as yf  # 改用 yfinance
 from bs4 import BeautifulSoup
 import Imgur
 from matplotlib.font_manager import FontProperties # 設定字體
+
 font_path = matplotlib.font_manager.FontProperties(fname='msjh.ttf')
 
 emoji_upinfo = u'\U0001F447'
 emoji_midinfo = u'\U0001F538'
 emoji_downinfo = u'\U0001F60A'
 
+# 使用 Yahoo Finance API 獲取股票名稱
 def get_stock_name(stockNumber):
+    url = f"https://query1.finance.yahoo.com/v7/finance/quote?symbols={stockNumber}.TW"
+    headers = {"User-Agent": "Mozilla/5.0"}
+
     try:
-        url = f'https://tw.stock.yahoo.com/q/q?s={stockNumber}'
-        page = requests.get(url)
-        soup = BeautifulSoup(page.content, 'html.parser')
-        table = soup.find_all(text='成交')[0].parent.parent.parent
-        stock_name = table.select('tr')[1].select('td')[0].text.strip('加到投資組合')
-        return stock_name
-    except:
-        return "no"
+        response = requests.get(url, headers=headers)
+        data = response.json()
+
+        if "quoteResponse" in data and "result" in data["quoteResponse"]:
+            stock_info = data["quoteResponse"]["result"]
+            if stock_info:
+                return stock_info[0]["shortName"]
+    except Exception as e:
+        print("股票名稱獲取失敗:", e)
+
+    return "no"
 
 # 使用者查詢股票
 def getprice(stockNumber, msg):
     stock_name = get_stock_name(stockNumber)
     if stock_name == "no": return "股票代碼錯誤!"
+    
     content = ""
-    stock = pdr.DataReader(stockNumber+'.TW', 'yahoo',  end=datetime.datetime.now())
-    date = stock.index[-1]
-    price = '%.2f ' % stock["Close"][-1] # 近日之收盤價
-    last_price = '%.2f ' % stock["Close"][-2] # 前一日之收盤價
-    spread_price = '%.2f ' % (float(price) - float(last_price)) # 價差
-    spread_ratio = '%.2f ' % (float(spread_price) / float(last_price)) # 漲跌幅
-    spread_price = spread_price.replace("-",'▽ ') if last_price > price else '△ ' + spread_price
-    spread_ratio = spread_ratio.replace("-",'▽ ') if  last_price > price else '△ ' + spread_ratio
-    open_price = str('%.2f ' % stock["Open"][-1]) # 近日之開盤價
-    high_price = str('%.2f ' % stock["High"][-1])# 近日之盤中高點
-    low_price = str('%.2f ' % stock["Low"][-1]) # 近日之盤中低點
-    price_five = stock.tail(5)["Close"] # 近五日之收盤價
-    stockAverage = str('%.2f ' % pd.to_numeric(price_five).mean())  # 計算近五日平均價格
-    stockSTD = str('%.2f ' % pd.to_numeric(price_five).std())   # 計算近五日標準差  
-    content += f"回報編號{stock_name}的股價{emoji_upinfo}\n--------------\n日期: {date}\n{emoji_midinfo}最新收盤價: {price}\n{emoji_midinfo}開盤價{open_price}\n{emoji_midinfo}最高價: \
-    {high_price}\n{emoji_midinfo}最低價: {low_price}\n{emoji_midinfo}價差: {spread_price} 漲跌幅: {spread_ratio}\n{emoji_midinfo}近五日平均價格: {stockAverage}\n{emoji_midinfo}近五日標準差: {stockSTD}\n"
-    if msg[0] == "#": content += f"--------------\n需要更詳細的資訊，可以點選以下選項進一步查詢唷{emoji_downinfo}"
-    else: content += '\n' 
+    stock = yf.Ticker(stockNumber+'.TW')
+    hist = stock.history(period="7d")
+
+    if hist.empty:
+        return "查無此股票代碼或 Yahoo Finance 暫時無法提供資料!"
+    
+    price = hist["Close"].iloc[-1]  # 最新收盤價
+    last_price = hist["Close"].iloc[-2]  # 前一天收盤價
+    spread_price = price - last_price  # 價差
+    spread_ratio = (spread_price / last_price) * 100  # 漲跌幅
+    open_price = hist["Open"].iloc[-1]  # 開盤價
+    high_price = hist["High"].iloc[-1]  # 最高價
+    low_price = hist["Low"].iloc[-1]  # 最低價
+
+    price_five = hist["Close"].tail(5)
+    stockAverage = price_five.mean()
+    stockSTD = price_five.std()
+
+    spread_price = f"{'△' if spread_price > 0 else '▽'} {spread_price:.2f}"
+    spread_ratio = f"{'△' if spread_price > 0 else '▽'} {spread_ratio:.2f}%"
+
+    content += f"回報 {stock_name} ({stockNumber}) 的股價 {emoji_upinfo}\n"
+    content += f"--------------\n日期: {hist.index[-1].date()}\n"
+    content += f"{emoji_midinfo} 最新收盤價: {price:.2f}\n"
+    content += f"{emoji_midinfo} 開盤價: {open_price:.2f}\n"
+    content += f"{emoji_midinfo} 最高價: {high_price:.2f}\n"
+    content += f"{emoji_midinfo} 最低價: {low_price:.2f}\n"
+    content += f"{emoji_midinfo} 價差: {spread_price} 漲跌幅: {spread_ratio}\n"
+    content += f"{emoji_midinfo} 近五日平均價格: {stockAverage:.2f}\n"
+    content += f"{emoji_midinfo} 近五日標準差: {stockSTD:.2f}\n"
+    
+    if msg[0] == "#": 
+        content += f"--------------\n需要更詳細的資訊，可以點選以下選項進一步查詢唷{emoji_downinfo}"
+    else: 
+        content += '\n' 
+    
     return content
 
 # --------- 畫近一年股價走勢圖
