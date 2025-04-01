@@ -25,18 +25,35 @@ def get_stock_name(stockNumber):
     url = f"https://query1.finance.yahoo.com/v7/finance/quote?symbols={stockNumber}.TW"
     headers = {"User-Agent": "Mozilla/5.0"}
 
+    print(f"正在查詢股票: {stockNumber}.TW，URL: {url}")  # 添加日誌
+
     try:
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=headers, timeout=10)  # 添加超時設定
+        response.raise_for_status()  # 如果請求失敗，拋出異常
         data = response.json()
+
+        print(f"API 回應: {data}")  # 打印回應以調試
 
         if "quoteResponse" in data and "result" in data["quoteResponse"]:
             stock_info = data["quoteResponse"]["result"]
-            if stock_info:
-                return stock_info[0]["shortName"]
-    except Exception as e:
-        print("股票名稱獲取失敗:", e)
+            if stock_info and len(stock_info) > 0:
+                return stock_info[0].get("shortName", "no")
+            else:
+                print("無效的股票資訊")
+                return "no"
+        else:
+            print("API 回應格式錯誤")
+            return "no"
 
-    return "no"
+    except requests.exceptions.RequestException as e:
+        print(f"網絡請求失敗: {e}")
+        return "no"
+    except json.JSONDecodeError as e:
+        print(f"JSON 解析失敗: {e}")
+        return "no"
+    except Exception as e:
+        print(f"其他錯誤: {e}")
+        return "no"
 
 # 使用者查詢股票
 def getprice(stockNumber, msg):
