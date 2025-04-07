@@ -143,4 +143,101 @@ def weekly_news():
         href = link.get('href', "")
         cache[cache_key] = (img_url, href)
         return img_url, href
-    except Exception as e
+    except Exception as e:
+        logging.error(f"解析財經大事失敗: {e}")
+        return "解析錯誤", ""
+
+# 5. 台股盤勢（Yahoo）
+def tw_stock_news():
+    cache_key = "tw_stock_news"
+    if cache_key in cache:
+        return cache[cache_key]
+    
+    url = 'https://tw.stock.yahoo.com/news_list/url/d/e/N2.html'
+    sp = fetch_url(url)
+    if not sp:
+        return "無法獲取台股盤勢"
+    
+    try:
+        articles = sp.find_all("a", class_='mbody')
+        if not articles:
+            logging.warning("未找到台股盤勢新聞")
+            return "無台股盤勢新聞"
+        
+        content = ""
+        for i in range(1, min(10, len(articles)), 2):  # 每隔一個取
+            href = articles[i].get("href", "")
+            content += f"{EMOJI_LIST[0]} {href}\n\n"
+        
+        cache[cache_key] = content
+        return content
+    except Exception as e:
+        logging.error(f"解析台股盤勢失敗: {e}")
+        return "解析錯誤"
+
+# 6. 股市重大要聞（Yahoo）
+def important_news():
+    cache_key = "important_news"
+    if cache_key in cache:
+        return cache[cache_key]
+    
+    url = 'https://tw.stock.yahoo.com/news_list/url/d/e/N1.html'
+    sp = fetch_url(url)
+    if not sp:
+        return "無法獲取重大要聞"
+    
+    try:
+        articles = sp.find_all("a", class_='mbody')
+        if not articles:
+            logging.warning("未找到重大要聞")
+            return "無重大要聞"
+        
+        content = ""
+        for i in range(1, min(10, len(articles)), 2):
+            href = articles[i].get("href", "")
+            content += f"{HAPPY} {href}\n\n"
+        
+        cache[cache_key] = content
+        return content
+    except Exception as e:
+        logging.error(f"解析重大要聞失敗: {e}")
+        return "解析錯誤"
+
+# 7. 鉅亨網台灣政經新聞
+def anue_news():
+    cache_key = "anue_news"
+    if cache_key in cache:
+        return cache[cache_key]
+    
+    url = 'https://news.cnyes.com/news/cat/tw_macro'
+    sp = fetch_url(url)
+    if not sp:
+        return "無法獲取政經新聞"
+    
+    try:
+        articles = sp.find_all('a', class_='_1Zdp')
+        if not articles:
+            logging.warning("未找到政經新聞")
+            return "無政經新聞"
+        
+        content = ""
+        for article in articles[:5]:
+            title = article.get('title', '無標題')
+            href = 'https://news.cnyes.com' + article.get('href', '')
+            content += f"{title}\n{href}\n------\n"
+        
+        cache[cache_key] = content
+        return content
+    except Exception as e:
+        logging.error(f"解析政經新聞失敗: {e}")
+        return "解析錯誤"
+
+# 測試
+if __name__ == "__main__":
+    print("個股新聞 (2330):", get_single_stock_news("2330"))
+    print("外匯新聞:", anue_forex_news())
+    print("頭條新聞:", anue_headline_news())
+    print("財經大事:", weekly_news())
+    print("台股盤勢:", tw_stock_news())
+    print("重大要聞:", important_news())
+    print("政經新聞:", anue_news())
