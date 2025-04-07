@@ -1,0 +1,29 @@
+# LINE Bot 相關套件
+line-bot-sdk      # LINE 官方提供的 Python SDK，用於與 LINE Messaging API 通訊，實現訊息收發、Webhook 處理等功能，例如推送文字、圖片或 Flex Message。
+flask             # 輕量級 Web 框架，用於構建後端服務，處理 LINE Webhook 請求並運行您的應用邏輯（例如 app.py）。
+gunicorn          # WSGI HTTP 伺服器，用於在 Render 上運行 Flask 應用，提供高效的多線程處理，確保應用穩定運行。
+
+# 資料庫相關
+pymongo           # MongoDB 的 Python 客戶端，用於操作 NoSQL 資料庫，可能用來儲存股票資料、用戶查詢紀錄或設定。
+
+# 圖片處理相關
+imgurpython       # Imgur API 的 Python 介面，用於上傳圖表（如 K 線圖、MACD）至 Imgur，並獲取 URL 以嵌入 LINE 訊息。
+
+# 網路請求與資料擷取
+requests          # HTTP 請求庫，用於從外部來源（如 Yahoo Finance）獲取網頁數據或 API 回應，例如提取股票資訊或新聞。
+beautifulsoup4    # HTML/XML 解析庫，與 requests 搭配，用於爬取網頁內容並提取結構化數據（如新聞標題和連結）。
+html5lib          # HTML 解析器，作為 BeautifulSoup 的後端選項，提供更強大的解析能力，處理不規範的 HTML。
+selenium          # 瀏覽器自動化工具，用於動態網頁爬取，可能在需要模擬用戶行為（如點擊、下拉）時使用。
+
+# 數據處理與分析
+numpy             # 數值計算庫，提供陣列操作和數學函數，用於處理股票數據或技術分析計算（如平均值、標準差）。
+pandas            # 數據分析庫，提供 DataFrame 結構，用於處理和分析股票價格、時間序列數據。
+pandas_datareader # 從外部來源（如 Yahoo Finance）獲取財經數據的工具，可能用於提取歷史股價。
+yfinance          # Yahoo Finance 的替代 API，用於獲取股票數據，支援歷史價格、新聞等，作為 pandas_datareader 的備用。
+twder             # 台灣匯率數據庫，可能用於查詢外幣匯率並整合至您的應用。
+matplotlib        # 繪圖庫，用於生成股票圖表（如趨勢圖、MACD），並保存為圖片以供 Imgur 上傳。
+mplfinance        # Matplotlib 的財經擴展，用於繪製專業的 K 線圖或其他金融圖表。
+setuptools        # Python 套件管理工具，用於安裝和管理依賴，通常不需要明確列出（pip 內建支援）。
+
+# 時間與排程
+schedule          # 簡單的任務排程庫，可能用於定時執行任務（如每日更新股票數據或推送新聞）。
