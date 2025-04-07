@@ -37,27 +37,27 @@ def fetch_url(url, timeout=10):
 
 # 1. 個股新聞（Yahoo Finance）
 def get_single_stock_news(stock_number):
-    if stock_number in cache:
-        return cache[stock_number]
-    
-    url = f'https://tw.stock.yahoo.com/quote/{stock_number}/news'  # 使用新版 URL
+    url = f'https://tw.stock.yahoo.com/quote/{stock_number}/news'
     sp = fetch_url(url)
     if not sp:
         return ["無法獲取新聞"], []
     
     try:
-        articles = sp.select('.news-list li a')  # 使用 CSS 選擇器
+        # 更新選擇器，根據當前頁面結構
+        articles = sp.select('ul li a[href*="/news/"]')  # 更靈活的選擇器
         if not articles:
             logging.warning(f"未找到新聞列表: {stock_number}")
             return ["無新聞數據"], []
         
         title_list, url_list = [], []
-        for article in articles[:5]:  # 前 5 則
+        for article in articles[:5]:
             title = truncate_title(article.text.strip())
+            href = article.get('href', '')
+            # 確保 URL 是完整的
+            if not href.startswith('http'):
+                href = 'https://tw.stock.yahoo.com' + href
             title_list.append(title)
-            url_list.append(article['href'])
-        
-        cache[stock_number] = (title_list, url_list)
+            url_list.append(href)
         return title_list, url_list
     except Exception as e:
         logging.error(f"解析個股新聞失敗: {stock_number}, 錯誤: {e}")
