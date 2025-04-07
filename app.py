@@ -46,10 +46,10 @@ def home():
     return "home"
 # 監聽所有來自 /callback 的 Post Request
 
-mongo_uri = os.getenv('MONGODB_URI', 'mongodb+srv://davidpatty11:phyozdas369@cluster0.aynxh0o.mongodb.net/stock_db?retryWrites=true&w=majority') # MongoDB 連線
-client = MongoClient(mongo_uri)
-db = client['stock_db']  # 指定資料庫名稱
-collection = db['prices']  # 指定集合名稱
+#mongo_uri = os.getenv('MONGODB_URI', 'mongodb+srv://davidpatty11:phyozdas369@cluster0.aynxh0o.mongodb.net/stock_db?retryWrites=true&w=majority') # MongoDB 連線
+#client = MongoClient(mongo_uri)
+#db = client['stock_db']  # 指定資料庫名稱
+#collection = db['prices']  # 指定集合名稱
 
 @app.route("/callback", methods=['POST'])
 def callback():
