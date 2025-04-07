@@ -1142,6 +1142,26 @@ def stock_reply(stockNumber, content_text):
 def stock_reply_other(stockNumber):
     content_text = "想知道更多?"
     text_message = TextSendMessage(
+        text=content_text,
+        quick_reply=QuickReply(
+            items=[
+                QuickReplyButton(action=MessageAction(label="即時股價", text="#"+stockNumber)),
+                QuickReplyButton(action=MessageAction(label="關注", text="關注"+stockNumber)),
+                QuickReplyButton(action=MessageAction(label="取消關注", text="刪除"+stockNumber)),
+                QuickReplyButton(action=MessageAction(label="走勢圖", text="P"+stockNumber)),
+                QuickReplyButton(action=MessageAction(label="K線圖", text="K"+stockNumber)),
+                QuickReplyButton(action=MessageAction(label="法人", text="F"+stockNumber)),
+                QuickReplyButton(action=MessageAction(label="三大面向分析", text="三大面向分析"+stockNumber)),
+                QuickReplyButton(action=MessageAction(label="新聞", text="N"+stockNumber)),
+                QuickReplyButton(action=MessageAction(label="年收益率", text="收益率"+stockNumber)),
+            ]
+        )
+    )
+    return text_message
+    '''
+def stock_reply_other(stockNumber):
+    content_text = "想知道更多?"
+    text_message = TextSendMessage(
                                 text = content_text ,
                                quick_reply=QuickReply(
                                    items=[
@@ -1202,7 +1222,7 @@ def stock_reply_other(stockNumber):
                                 ]
                             ))
     return text_message
-
+'''
 # 股票三大面向分析(查詢股價配合quick repay)
 def stock_ananlysis_menu(stockNumber):
     flex_message = FlexSendMessage(
