@@ -1,7 +1,3 @@
-'''
-Created by Tsung Yu on 17/03/2020.
-Copyright © 2020 Tsung Yu. All rights reserved.
-'''
 # 系統與第三方模組
 import re  # 正規表示式，用來比對使用者輸入指令
 from pymongo import MongoClient  # 用來連接 MongoDB 資料庫
