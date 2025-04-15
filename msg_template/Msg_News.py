@@ -16,7 +16,9 @@ def single_stock(stockNumber):
         # 確保 title 和 url 有效
         title = title_list[i] if title_list[i] and isinstance(title_list[i], str) else "無標題"
         url = url_list[i] if url_list[i] and isinstance(url_list[i], str) else ""
-        if not url:  # 如果 URL 無效，跳過這條新聞
+        
+        # 如果 URL 無效，跳過這條新聞
+        if not url:
             continue
         
         # 截斷標題
@@ -52,7 +54,7 @@ def single_stock(stockNumber):
         })
     
     # 如果沒有有效新聞，返回簡單消息
-    if not news_items:
+    if not news_items or not buttons:
         return TextSendMessage(text=f"無法獲取 {stockNumber} 的有效新聞數據，請稍後再試！")
     
     buttons.append({"type": "spacer", "size": "sm"})
