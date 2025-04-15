@@ -592,11 +592,19 @@ def handle_message(event):
         line_bot_api.push_message(uid, Msg_News.weekly_finance_news())
         return 0
     elif re.match('N[0-9]{4}', msg):
-        stockNumber = msg[1:]
-        line_bot_api.push_message(uid, TextSendMessage(f'稍等一下, 將給您編號: {stockNumber} 的新聞資訊...'))
-        content = Msg_News.single_stock(stockNumber)
-        line_bot_api.push_message(uid, content) 
+        stockNumber = msg[1:5]
+        if not stockNumber or not stockNumber.isdigit():
+            line_bot_api.push_message(uid, TextSendMessage("無效的股票代碼"))
+            return 0
+        
+        line_bot_api.push_message(uid, TextSendMessage(f'即將給您代號{stockNumber} 個股新聞'))
+        titles, urls = news.get_single_stock_news(stockNumber)
+        content = "\n".join([f"{t}\n{u}" for t, u in zip(titles, urls)]) if titles else "暫無新聞數據"
+        line_bot_api.push_message(uid, TextSendMessage(content))
+        
+        # 推送快速回覆
         btn_msg = Msg_Template.stock_reply_other(stockNumber)
+        print(f"推送的 btn_msg: {btn_msg}")  # 添加日誌
         line_bot_api.push_message(uid, btn_msg)
         return 0
     elif re.match("N外匯[A-Z]{3}", msg):
