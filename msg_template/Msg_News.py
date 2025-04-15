@@ -57,15 +57,8 @@ def single_stock(stockNumber):
     if not news_items or not buttons:
         return TextSendMessage(text=f"無法獲取 {stockNumber} 的有效新聞數據，請稍後再試！")
     
-    # 添加 spacer，確保不為 None
+    # 添加 spacer（僅在有按鈕時添加）
     #buttons.append({"type": "spacer", "size": "sm"})
-    
-    # 過濾掉可能的 None 元素（雖然這裡應該不會有 None，但以防萬一）
-    buttons = [btn for btn in buttons if btn is not None]
-    
-    # 檢查 buttons 是否有效
-    if not buttons:
-        return TextSendMessage(text=f"無法生成 {stockNumber} 的新聞按鈕，請稍後再試！")
     
     flex_message = FlexSendMessage(
         alt_text="個股新聞",
@@ -73,7 +66,7 @@ def single_stock(stockNumber):
             "type": "bubble",
             "hero": {
                 "type": "image",
-                "url": "https://img.lovepik.com/free-png/20211126/lovepik-computer-watching-news-png-image_401167758_wh1200.png",
+                "url": "https://i.imgur.com/uvrIuT9.jpg",
                 "size": "full",
                 "aspectRatio": "20:13",
                 "aspectMode": "fit",
