@@ -13,9 +13,15 @@ def single_stock(stockNumber):
     news_items = []
     buttons = []
     for i in range(min(len(title_list), 5)):  # 最多 5 則新聞
-        # 截斷標題，避免超過 Line 按鈕標籤限制
-        title = title_list[i][:37] + "..." if len(title_list[i]) > 37 else title_list[i]
-        url = start_url + url_list[i] if not url_list[i].startswith("http") else url_list[i]
+        # 確保 title 和 url 有效
+        title = title_list[i] if title_list[i] and isinstance(title_list[i], str) else "無標題"
+        url = url_list[i] if url_list[i] and isinstance(url_list[i], str) else ""
+        if not url:  # 如果 URL 無效，跳過這條新聞
+            continue
+        
+        # 截斷標題
+        title = title[:37] + "..." if len(title) > 37 else title
+        url = start_url + url if not url.startswith("http") else url
         
         # 添加新聞標題到 body
         news_items.append({
@@ -44,6 +50,11 @@ def single_stock(stockNumber):
                 "uri": url
             }
         })
+    
+    # 如果沒有有效新聞，返回簡單消息
+    if not news_items:
+        return TextSendMessage(text=f"無法獲取 {stockNumber} 的有效新聞數據，請稍後再試！")
+    
     buttons.append({"type": "spacer", "size": "sm"})
     
     flex_message = FlexSendMessage(
@@ -70,7 +81,7 @@ def single_stock(stockNumber):
                         "size": "xl",
                         "style": "normal"
                     },
-                    *news_items  # 動態添加新聞標題
+                    *news_items
                 ]
             },
             "footer": {
@@ -83,7 +94,7 @@ def single_stock(stockNumber):
         }
     )
     
-    # 附加快速回覆
+    # 快速回覆
     quick_reply = TextSendMessage(
         text="想知道更多？",
         quick_reply=QuickReply(
