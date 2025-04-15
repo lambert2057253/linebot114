@@ -21,14 +21,17 @@ def single_stock(stockNumber):
         if not url:
             continue
         
-        # 截斷標題
-        title = title[:37] + "..." if len(title) > 37 else title
+        # 截斷標題（body 顯示用）
+        display_title = title[:37] + "..." if len(title) > 37 else title
+        # 截斷標題（按鈕標籤用，Line 按鈕標籤最多 40 字元）
+        button_label = title[:37] + "..." if len(title) > 37 else title
+        
         url = start_url + url if not url.startswith("http") else url
         
         # 添加新聞標題到 body
         news_items.append({
             "type": "text",
-            "text": title,
+            "text": display_title,
             "size": "sm",
             "color": "#555555",
             "wrap": True,
@@ -41,14 +44,14 @@ def single_stock(stockNumber):
                 "margin": "md"
             })
         
-        # 添加按鈕到 footer
+        # 添加按鈕到 footer，使用新聞標題作為按鈕標籤
         button = {
             "type": "button",
             "style": "link",
             "height": "sm",
             "action": {
                 "type": "uri",
-                "label": f"閱讀全文 {i+1}",
+                "label": button_label,  # 直接使用新聞標題
                 "uri": url
             }
         }
