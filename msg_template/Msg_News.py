@@ -1,5 +1,4 @@
-# Msg_News.py
-from linebot.models import FlexSendMessage, TextSendMessage
+from linebot.models import FlexSendMessage, TextSendMessage, QuickReply, QuickReplyButton, MessageAction
 import news
 
 def single_stock(stockNumber):
@@ -10,17 +9,39 @@ def single_stock(stockNumber):
     if not url_list or title_list[0] == "無法獲取新聞":
         return TextSendMessage(text=f"無法獲取 {stockNumber} 的新聞數據，請稍後再試！")
     
-    # 動態構建按鈕
+    # 動態構建新聞內容（body）和按鈕（footer）
+    news_items = []
     buttons = []
     for i in range(min(len(title_list), 5)):  # 最多 5 則新聞
+        # 截斷標題，避免超過 Line 按鈕標籤限制
+        title = title_list[i][:37] + "..." if len(title_list[i]) > 37 else title_list[i]
+        url = start_url + url_list[i] if not url_list[i].startswith("http") else url_list[i]
+        
+        # 添加新聞標題到 body
+        news_items.append({
+            "type": "text",
+            "text": title,
+            "size": "sm",
+            "color": "#555555",
+            "wrap": True,
+            "margin": "md"
+        })
+        # 添加分隔線
+        if i < min(len(title_list), 5) - 1:
+            news_items.append({
+                "type": "separator",
+                "margin": "md"
+            })
+        
+        # 添加按鈕到 footer
         buttons.append({
             "type": "button",
             "style": "link",
             "height": "sm",
             "action": {
                 "type": "uri",
-                "label": title_list[i],
-                "uri": start_url + url_list[i]
+                "label": f"閱讀全文 {i+1}",
+                "uri": url
             }
         })
     buttons.append({"type": "spacer", "size": "sm"})
@@ -31,7 +52,7 @@ def single_stock(stockNumber):
             "type": "bubble",
             "hero": {
                 "type": "image",
-                "url": "https://i.imgur.com/uvrIuT9.jpg",
+                "url": "https://i.imgur.com/uvrIuT9.jpg",  # 個股新聞圖片
                 "size": "full",
                 "aspectRatio": "20:13",
                 "aspectMode": "fit",
@@ -48,7 +69,8 @@ def single_stock(stockNumber):
                         "weight": "bold",
                         "size": "xl",
                         "style": "normal"
-                    }
+                    },
+                    *news_items  # 動態添加新聞標題
                 ]
             },
             "footer": {
@@ -60,26 +82,56 @@ def single_stock(stockNumber):
             }
         }
     )
-    return flex_message
+    
+    # 附加快速回覆
+    quick_reply = TextSendMessage(
+        text="想知道更多？",
+        quick_reply=QuickReply(
+            items=[
+                QuickReplyButton(action=MessageAction(label="即時股價", text=f"#{stockNumber}")),
+                QuickReplyButton(action=MessageAction(label="關注", text=f"關注{stockNumber}")),
+                QuickReplyButton(action=MessageAction(label="新聞", text=f"N{stockNumber}")),
+            ]
+        )
+    )
+    
+    return [flex_message, quick_reply]
 
 def exrate_news():
     start_url = "https://news.cnyes.com"
     title_list, url_list = news.anue_forex_news()
     
-    # 檢查是否獲取到有效新聞
-    if not url_list or title_list[0] == "無法獲取外幣匯率新聞":
-        return TextSendMessage(text="無法獲取外幣匯率新聞，請稍後再試！")
+    if not url_list or title_list[0] == "無法獲取外匯新聞":
+        return TextSendMessage(text="無法獲取外匯新聞，請稍後再試！")
     
+    news_items = []
     buttons = []
-    for i in range(min(len(title_list), 5)):  # 最多 5 則新聞
+    for i in range(min(len(title_list), 5)):
+        title = title_list[i][:37] + "..." if len(title_list[i]) > 37 else title_list[i]
+        url = url_list[i]  # 已包含完整 URL
+        
+        news_items.append({
+            "type": "text",
+            "text": title,
+            "size": "sm",
+            "color": "#555555",
+            "wrap": True,
+            "margin": "md"
+        })
+        if i < min(len(title_list), 5) - 1:
+            news_items.append({
+                "type": "separator",
+                "margin": "md"
+            })
+        
         buttons.append({
             "type": "button",
             "style": "link",
             "height": "sm",
             "action": {
                 "type": "uri",
-                "label": title_list[i],
-                "uri": url_list[i]  # 已包含完整 URL
+                "label": f"閱讀全文 {i+1}",
+                "uri": url
             }
         })
     buttons.append({"type": "spacer", "size": "sm"})
@@ -90,7 +142,7 @@ def exrate_news():
             "type": "bubble",
             "hero": {
                 "type": "image",
-                "url": "https://i.imgur.com/uvrIuT9.jpg",
+                "url": "https://i.imgur.com/forex_image.jpg",  # 替換為外匯相關圖片
                 "size": "full",
                 "aspectRatio": "20:13",
                 "aspectMode": "fit",
@@ -107,7 +159,8 @@ def exrate_news():
                         "weight": "bold",
                         "size": "xl",
                         "style": "normal"
-                    }
+                    },
+                    *news_items
                 ]
             },
             "footer": {
@@ -119,12 +172,22 @@ def exrate_news():
             }
         }
     )
-    return flex_message
+    
+    quick_reply = TextSendMessage(
+        text="想知道更多？",
+        quick_reply=QuickReply(
+            items=[
+                QuickReplyButton(action=MessageAction(label="外匯新聞", text="/外匯新聞")),
+                QuickReplyButton(action=MessageAction(label="頭條新聞", text="/頭條新聞")),
+            ]
+        )
+    )
+    
+    return [flex_message, quick_reply]
 
 def weekly_finance_news():
     img, url = news.weekly_news()
     
-    # 檢查是否獲取到有效數據
     if "無法獲取" in img or "無法獲取" in url:
         return TextSendMessage(text="無法獲取每周財經大事新聞，請稍後再試！")
     
@@ -132,7 +195,7 @@ def weekly_finance_news():
         alt_text="每周財經大事新聞",
         contents={
             "type": "bubble",
-            "size": "giga",
+            "size": "kilo",  # 調整為較小尺寸
             "body": {
                 "type": "box",
                 "layout": "vertical",
@@ -149,10 +212,29 @@ def weekly_finance_news():
                             "label": "action",
                             "uri": url
                         }
+                    },
+                    {
+                        "type": "text",
+                        "text": "每周財經大事",
+                        "weight": "bold",
+                        "size": "md",
+                        "margin": "md",
+                        "color": "#555555"
                     }
                 ],
                 "paddingAll": "0px"
             }
         }
     )
-    return flex_message
+    
+    quick_reply = TextSendMessage(
+        text="想知道更多？",
+        quick_reply=QuickReply(
+            items=[
+                QuickReplyButton(action=MessageAction(label="每周財經大事", text="/每周財經大事")),
+                QuickReplyButton(action=MessageAction(label="頭條新聞", text="/頭條新聞")),
+            ]
+        )
+    )
+    
+    return [flex_message, quick_reply]
