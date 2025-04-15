@@ -597,7 +597,7 @@ def handle_message(event):
             line_bot_api.push_message(uid, TextSendMessage("無效的股票代碼"))
             return 0
         
-        line_bot_api.push_message(uid, TextSendMessage(f'即將給您代號{stockNumber} 個股新聞'))
+        line_bot_api.push_message(uid, TextSendMessage(f'稍等一下, 即將給您代號{stockNumber} 個股新聞資訊...'))
         titles, urls = news.get_single_stock_news(stockNumber)
         content = "\n".join([f"{t}\n{u}" for t, u in zip(titles, urls)]) if titles else "暫無新聞數據"
         line_bot_api.push_message(uid, TextSendMessage(content))
