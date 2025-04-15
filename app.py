@@ -597,14 +597,16 @@ def handle_message(event):
             line_bot_api.push_message(uid, TextSendMessage("無效的股票代碼"))
             return 0
         
-        line_bot_api.push_message(uid, TextSendMessage(f'稍等一下, 即將給您代號{stockNumber} 個股新聞資訊...'))
+        line_bot_api.push_message(uid, TextSendMessage(f'即將給您代號{stockNumber} 個股新聞'))
         messages = Msg_News.single_stock(stockNumber)
         
         # 檢查 messages 是否為列表
         if isinstance(messages, list):
             for msg in messages:
+                app.logger.info(f"推送的消息: {msg}")  # 添加日誌
                 line_bot_api.push_message(uid, msg)
         else:
+            app.logger.info(f"推送的消息: {messages}")
             line_bot_api.push_message(uid, messages)
         return 0
     elif re.match("N外匯[A-Z]{3}", msg):
