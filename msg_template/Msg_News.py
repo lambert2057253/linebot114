@@ -70,7 +70,8 @@ def single_stock(stockNumber):
             "type": "bubble",
             "hero": {
                 "type": "image",
-                "url": "https://i.imgur.com/uvrIuT9.jpg",
+                "url": "https://img.lovepik.com/free-png/20211126/lovepik-computer-watching-news-png-image_401167758_wh1200.png",
+                #"url": "https://i.imgur.com/uvrIuT9.jpg",
                 "size": "full",
                 "aspectRatio": "20:13",
                 "aspectMode": "fit",
