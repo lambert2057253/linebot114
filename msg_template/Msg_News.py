@@ -57,7 +57,12 @@ def single_stock(stockNumber):
     if not news_items or not buttons:
         return TextSendMessage(text=f"無法獲取 {stockNumber} 的有效新聞數據，請稍後再試！")
     
-    buttons.append({"type": "spacer", "size": "sm"})
+    # 添加 spacer，確保不為 None
+    spacer = {"type": "spacer", "size": "sm"}
+    buttons.append(spacer)
+    
+    # 過濾掉可能的 None 元素
+    buttons = [btn for btn in buttons if btn is not None]
     
     flex_message = FlexSendMessage(
         alt_text="個股新聞",
@@ -109,7 +114,7 @@ def single_stock(stockNumber):
     )
     
     return [flex_message, quick_reply]
-
+    
 def exrate_news():
     start_url = "https://news.cnyes.com"
     title_list, url_list = news.anue_forex_news()
