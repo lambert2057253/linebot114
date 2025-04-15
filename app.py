@@ -603,7 +603,7 @@ def handle_message(event):
         # 檢查 messages 是否為列表
         if isinstance(messages, list):
             for msg in messages:
-                app.logger.info(f"推送的消息: {msg}")  # 添加日誌
+                app.logger.info(f"推送的消息: {msg}")
                 line_bot_api.push_message(uid, msg)
         else:
             app.logger.info(f"推送的消息: {messages}")
