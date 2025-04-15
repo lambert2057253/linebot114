@@ -12,15 +12,19 @@ def single_stock(stockNumber):
     # 動態構建新聞內容（body）和按鈕（footer）
     news_items = []
     buttons = []
+    valid_news = []
     for i in range(min(len(title_list), 5)):  # 最多 5 則新聞
         # 確保 title 和 url 有效
         title = title_list[i] if title_list[i] and isinstance(title_list[i], str) else "無標題"
         url = url_list[i] if url_list[i] and isinstance(url_list[i], str) else ""
         
-        # 如果 URL 無效，跳過這條新聞
-        if not url:
+    for title, url in zip(title_list, url_list):
+        if not url or not title:
             continue
-        
+        valid_news.append((title, url))
+        if len(valid_news) == 5:
+            break
+            
         # 截斷標題
         title = title[:37] + "..." if len(title) > 37 else title
         url = start_url + url if not url.startswith("http") else url
