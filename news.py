@@ -43,21 +43,26 @@ def get_single_stock_news(stock_number):
         return ["無法獲取新聞"], []
     
     try:
-        # 更新選擇器，根據當前頁面結構
-        articles = sp.select('ul li a[href*="/news/"]')  # 更靈活的選擇器
+        articles = sp.select('ul li a[href*="/news/"]')
         if not articles:
             logging.warning(f"未找到新聞列表: {stock_number}")
             return ["無新聞數據"], []
         
         title_list, url_list = [], []
         for article in articles[:5]:
-            title = truncate_title(article.text.strip())
+            title = article.text.strip()
             href = article.get('href', '')
-            # 確保 URL 是完整的
+            # 確保 title 和 href 不為空，且 title 看起來像是有效的新聞標題
+            if not title or not href or len(title) < 5:  # 假設標題至少 5 個字符
+                continue
             if not href.startswith('http'):
                 href = 'https://tw.stock.yahoo.com' + href
             title_list.append(title)
             url_list.append(href)
+        
+        # 如果最終沒有有效數據，返回預設值
+        if not title_list:
+            return ["無新聞數據"], []
         return title_list, url_list
     except Exception as e:
         logging.error(f"解析個股新聞失敗: {stock_number}, 錯誤: {e}")
