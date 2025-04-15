@@ -43,26 +43,38 @@ def get_single_stock_news(stock_number):
         return ["無法獲取新聞"], []
     
     try:
-        articles = sp.select('ul li a[href*="/news/"]')
+        # 檢查網頁結構，調整選擇器
+        # 假設新聞列表在類似 <ul class="news-list"> 的結構中
+        articles = sp.select('ul li a[href*="/news/"]')  # 需要根據實際網頁結構調整
         if not articles:
             logging.warning(f"未找到新聞列表: {stock_number}")
             return ["無新聞數據"], []
         
         title_list, url_list = [], []
-        for article in articles[:5]:
+        for article in articles[:10]:  # 抓取更多文章以確保有足夠的新聞
             title = article.text.strip()
             href = article.get('href', '')
-            # 確保 title 和 href 不為空，且 title 看起來像是有效的新聞標題
-            if not title or not href or len(title) < 5:  # 假設標題至少 5 個字符
+            # 放寬過濾條件，並記錄被過濾的標題
+            if not title or not href:
+                logging.info(f"過濾掉無效新聞: title={title}, href={href}")
+                continue
+            if len(title) < 3:  # 放寬限制
+                logging.info(f"過濾掉標題過短的新聞: title={title}")
                 continue
             if not href.startswith('http'):
                 href = 'https://tw.stock.yahoo.com' + href
             title_list.append(title)
             url_list.append(href)
+            # 如果已經有 5 則新聞，停止處理
+            if len(title_list) >= 5:
+                break
         
         # 如果最終沒有有效數據，返回預設值
         if not title_list:
             return ["無新聞數據"], []
+        
+        # 記錄抓取的新聞數量
+        logging.info(f"抓取到 {len(title_list)} 則新聞 for stock {stock_number}")
         return title_list, url_list
     except Exception as e:
         logging.error(f"解析個股新聞失敗: {stock_number}, 錯誤: {e}")
