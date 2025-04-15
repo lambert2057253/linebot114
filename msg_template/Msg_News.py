@@ -58,11 +58,14 @@ def single_stock(stockNumber):
         return TextSendMessage(text=f"無法獲取 {stockNumber} 的有效新聞數據，請稍後再試！")
     
     # 添加 spacer，確保不為 None
-    spacer = {"type": "spacer", "size": "sm"}
-    buttons.append(spacer)
+    buttons.append({"type": "spacer", "size": "sm"})
     
-    # 過濾掉可能的 None 元素
+    # 過濾掉可能的 None 元素（雖然這裡應該不會有 None，但以防萬一）
     buttons = [btn for btn in buttons if btn is not None]
+    
+    # 檢查 buttons 是否有效
+    if not buttons:
+        return TextSendMessage(text=f"無法生成 {stockNumber} 的新聞按鈕，請稍後再試！")
     
     flex_message = FlexSendMessage(
         alt_text="個股新聞",
