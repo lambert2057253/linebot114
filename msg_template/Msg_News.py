@@ -90,7 +90,7 @@ def single_stock(stockNumber):
                         "size": "xl",
                         "style": "normal"
                     },
-                    *news_items
+                    #*news_items
                 ]
             },
             "footer": {
