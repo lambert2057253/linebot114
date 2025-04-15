@@ -12,19 +12,15 @@ def single_stock(stockNumber):
     # 動態構建新聞內容（body）和按鈕（footer）
     news_items = []
     buttons = []
-    valid_news = []
     for i in range(min(len(title_list), 5)):  # 最多 5 則新聞
         # 確保 title 和 url 有效
         title = title_list[i] if title_list[i] and isinstance(title_list[i], str) else "無標題"
         url = url_list[i] if url_list[i] and isinstance(url_list[i], str) else ""
         
-    for title, url in zip(title_list, url_list):
-        if not url or not title:
+        # 如果 URL 無效，跳過這條新聞
+        if not url:
             continue
-        valid_news.append((title, url))
-        if len(valid_news) == 5:
-            break
-            
+        
         # 截斷標題
         title = title[:37] + "..." if len(title) > 37 else title
         url = start_url + url if not url.startswith("http") else url
@@ -38,7 +34,7 @@ def single_stock(stockNumber):
             "wrap": True,
             "margin": "md"
         })
-        # 添加分隔線
+        # 添加分隔線（如果不是最後一則新聞）
         if i < min(len(title_list), 5) - 1:
             news_items.append({
                 "type": "separator",
@@ -46,7 +42,7 @@ def single_stock(stockNumber):
             })
         
         # 添加按鈕到 footer
-        buttons.append({
+        button = {
             "type": "button",
             "style": "link",
             "height": "sm",
@@ -55,23 +51,25 @@ def single_stock(stockNumber):
                 "label": f"閱讀全文 {i+1}",
                 "uri": url
             }
-        })
+        }
+        buttons.append(button)
     
     # 如果沒有有效新聞，返回簡單消息
     if not news_items or not buttons:
         return TextSendMessage(text=f"無法獲取 {stockNumber} 的有效新聞數據，請稍後再試！")
     
-    # 添加 spacer（僅在有按鈕時添加）
-    #buttons.append({"type": "spacer", "size": "sm"})
+    # 檢查 buttons 是否有效
+    if not buttons:
+        return TextSendMessage(text=f"無法生成 {stockNumber} 的新聞按鈕，請稍後再試！")
     
+    # 構建 Flex Message
     flex_message = FlexSendMessage(
         alt_text="個股新聞",
         contents={
             "type": "bubble",
             "hero": {
                 "type": "image",
-                "url": "https://img.lovepik.com/free-png/20211126/lovepik-computer-watching-news-png-image_401167758_wh1200.png",
-                #"url": "https://i.imgur.com/uvrIuT9.jpg",
+                "url": "https://i.imgur.com/uvrIuT9.jpg",
                 "size": "full",
                 "aspectRatio": "20:13",
                 "aspectMode": "fit",
@@ -104,7 +102,7 @@ def single_stock(stockNumber):
     
     # 快速回覆
     quick_reply = TextSendMessage(
-        text="想知道更多？",
+        text=f"目前找到 {len(buttons)} 則新聞，是否想知道更多？",
         quick_reply=QuickReply(
             items=[
                 QuickReplyButton(action=MessageAction(label="即時股價", text=f"#{stockNumber}")),
