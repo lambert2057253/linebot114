@@ -596,11 +596,16 @@ def handle_message(event):
         if not stockNumber or not stockNumber.isdigit():
             line_bot_api.push_message(uid, TextSendMessage("無效的股票代碼"))
             return 0
-    
+        
         line_bot_api.push_message(uid, TextSendMessage(f'稍等一下, 即將給您代號{stockNumber} 個股新聞資訊...'))
         messages = Msg_News.single_stock(stockNumber)
-        for msg in messages:
-            line_bot_api.push_message(uid, msg)
+        
+        # 檢查 messages 是否為列表
+        if isinstance(messages, list):
+            for msg in messages:
+                line_bot_api.push_message(uid, msg)
+        else:
+            line_bot_api.push_message(uid, messages)
         return 0
     elif re.match("N外匯[A-Z]{3}", msg):
         currency = msg[3:6]
