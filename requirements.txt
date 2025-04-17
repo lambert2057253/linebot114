@@ -14,6 +14,7 @@ requests          # HTTP 請求庫，用於從外部來源（如 Yahoo Finance�
 beautifulsoup4    # HTML/XML 解析庫，與 requests 搭配，用於爬取網頁內容並提取結構化數據（如新聞標題和連結）。
 html5lib          # HTML 解析器，作為 BeautifulSoup 的後端選項，提供更強大的解析能力，處理不規範的 HTML。
 selenium          # 瀏覽器自動化工具，用於動態網頁爬取，可能在需要模擬用戶行為（如點擊、下拉）時使用。
+cachetools
 
 # 數據處理與分析
 numpy             # 數值計算庫，提供陣列操作和數學函數，用於處理股票數據或技術分析計算（如平均值、標準差）。
