@@ -49,3 +49,9 @@ graph TD
     classDef external fill:#fff3e6,stroke:#ff6600,stroke-width:2px,color:#ff6600;
     classDef line fill:#e6ffe6,stroke:#00cc00,stroke-width:2px,color:#008000;
     classDef user fill:#f2e6ff,stroke:#6600cc,stroke-width:2px,color:#6600cc;
+
+Client ID:
+3e12870c95d5b0f
+Client secret:
+63017aa3cded077bbfb5375194782f48554e2f08
+
