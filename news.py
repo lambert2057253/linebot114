@@ -248,13 +248,3 @@ def anue_news():
     except Exception as e:
         logging.error(f"解析政經新聞失敗: {e}")
         return "解析錯誤"
-
-# 測試
-if __name__ == "__main__":
-    print("個股新聞 (2330):", get_single_stock_news("2330"))
-    print("外匯新聞:", anue_forex_news())
-    print("頭條新聞:", anue_headline_news())
-    print("財經大事:", weekly_news())
-    print("台股盤勢:", tw_stock_news())
-    print("重大要聞:", important_news())
-    print("政經新聞:", anue_news())
