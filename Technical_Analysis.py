@@ -22,9 +22,30 @@ else:
 
 def general_df(stockNumber):
     stockNumberTW = stockNumber + ".TW"
-    df_x = pdr.DataReader(stockNumberTW, 'yahoo', start="2019")
-    df_x.rename(columns={'Open': 'open', 'High': 'high', 'Low': 'low', 'Close': 'close'}, inplace=True)
-    return df_x
+    try:
+        # 使用 yfinance 獲取股票數據
+        stock = yf.Ticker(stockNumberTW)
+        df_x = stock.history(start="2019-01-01")
+        if df_x.empty:
+            logging.error(f"No data found for {stockNumberTW}")
+            raise ValueError(f"無法獲取 {stockNumberTW} 的股票數據")
+        
+        # 將欄位名稱轉為小寫，與原程式碼保持一致
+        df_x = df_x.rename(columns={
+            'Open': 'open',
+            'High': 'high',
+            'Low': 'low',
+            'Close': 'close',
+            'Volume': 'volume',
+            'Dividends': 'dividends',
+            'Stock Splits': 'stock_splits'
+        })
+        logging.debug(f"數據形狀: {df_x.shape}")
+        logging.debug(f"數據樣本: \n{df_x.tail()}")
+        return df_x
+    except Exception as e:
+        logging.error(f"Failed to fetch data for {stockNumberTW}: {e}")
+        raise
 
 def get_stockName(stockNumber):
     try:
@@ -55,7 +76,12 @@ def get_stockName(stockNumber):
 
 def MACD_pic(stockNumber, msg):
     stock_name = get_stockName(stockNumber)
-    df_x = general_df(stockNumber)
+    try:
+        df_x = general_df(stockNumber)
+    except Exception as e:
+        logging.error(f"無法獲取 {stockNumber} 的股票數據: {e}")
+        return None  # 返回 None，讓上層處理錯誤
+
     jj = df_x.reset_index(drop=False)
     
     # 手動計算 MACD
@@ -70,6 +96,7 @@ def MACD_pic(stockNumber, msg):
         'MACD Hist': macd_hist
     }, index=df_x.index)
     
+    logging.info("開始生成圖表")
     macd_df.plot(figsize=(16, 8))
     plt.xlabel("日期", fontproperties=chinese_font)
     plt.ylabel("值", fontproperties=chinese_font)
@@ -77,7 +104,19 @@ def MACD_pic(stockNumber, msg):
     plt.title(stock_name + " MACD線", fontproperties=chinese_font)
     plt.savefig(msg + ".png")
     plt.close()
-    return Imgur.showImgur(msg)
+    logging.info(f"圖表已保存至 {msg}.png")
+    
+    # 上傳圖片到 Imgur
+    try:
+        if Imgur:
+            img_url = Imgur.showImgur(msg)
+            return img_url
+        else:
+            logging.error("Imgur 模組未導入，無法上傳圖片")
+            return None
+    except Exception as e:
+        logging.error(f"Imgur 上傳失敗: {e}")
+        return None
 
 def RSI_pic(stockNumber, msg):
     stock_name = get_stockName(stockNumber)
