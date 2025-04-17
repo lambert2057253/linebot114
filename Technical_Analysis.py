@@ -10,7 +10,20 @@ import datetime
 from bs4 import BeautifulSoup
 from matplotlib.font_manager import FontProperties
 import os
+import logging  # 導入 logging 模組
+# 設置日誌
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
 
+# 假設 Imgur 模組已經存在
+try:
+    import Imgur
+except ImportError:
+    logging.error("Imgur 模組未找到！")
+    Imgur = None
+    
 # 固定字體路徑
 font_path = '/opt/render/project/src/msjh.ttf'
 if not os.path.exists(font_path):
