@@ -1158,7 +1158,7 @@ def stock_flex_reply(stockNumber):
                     "size": "micro",
                     "hero": {
                         "type": "image",
-                        "url": "https://raw.githubusercontent.com/lambert2057253/linebot114/main/img/三大面向.jpg",  # 三大面向
+                        "url": "https://raw.githubusercontent.com/lambert2057253/linebot114/main/img/三大分析.jpg",  # 三大面向
                         "size": "full",
                         "aspectMode": "cover",
                         "aspectRatio": "320:213"
