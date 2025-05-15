@@ -1082,6 +1082,145 @@ def fin_books():
             }
         )
     return flex_message
+    
+def stock_flex_reply(stockNumber):
+    return FlexSendMessage(
+        alt_text="股票功能選單",
+        contents={
+            "type": "carousel",
+            "contents": [
+                {
+                    "type": "bubble",
+                    "size": "micro",
+                    "hero": {
+                        "type": "image",
+                        "url": "https://imgur.com/your_chart_image.jpg",  # 走勢圖圖示
+                        "size": "full",
+                        "aspectMode": "cover",
+                        "aspectRatio": "320:213",
+                        "backgroundColor": "#FFFFFF"
+                    },
+                    "body": {
+                        "type": "box",
+                        "layout": "vertical",
+                        "contents": [
+                            {"type": "text", "text": "走勢圖", "weight": "bold", "size": "md", "align": "center"},
+                            {"type": "button", "action": {"type": "message", "label": "查看", "text": f"P{stockNumber}"}, "style": "link", "height": "sm"}
+                        ],
+                        "spacing": "sm",
+                        "paddingAll": "13px"
+                    }
+                },
+                {
+                    "type": "bubble",
+                    "size": "micro",
+                    "hero": {
+                        "type": "image",
+                        "url": "https://imgur.com/your_kline_image.jpg",  # K線圖圖示
+                        "size": "full",
+                        "aspectMode": "cover",
+                        "aspectRatio": "320:213"
+                    },
+                    "body": {
+                        "type": "box",
+                        "layout": "vertical",
+                        "contents": [
+                            {"type": "text", "text": "K線圖", "weight": "bold", "size": "md", "align": "center"},
+                            {"type": "button", "action": {"type": "message", "label": "查看", "text": f"K{stockNumber}"}, "style": "link", "height": "sm"}
+                        ],
+                        "spacing": "sm",
+                        "paddingAll": "13px"
+                    }
+                },
+                {
+                    "type": "bubble",
+                    "size": "micro",
+                    "hero": {
+                        "type": "image",
+                        "url": "https://imgur.com/your_institution_image.jpg",  # 法人圖示
+                        "size": "full",
+                        "aspectMode": "cover",
+                        "aspectRatio": "320:213"
+                    },
+                    "body": {
+                        "type": "box",
+                        "layout": "vertical",
+                        "contents": [
+                            {"type": "text", "text": "法人", "weight": "bold", "size": "md", "align": "center"},
+                            {"type": "button", "action": {"type": "message", "label": "查看", "text": f"F{stockNumber}"}, "style": "link", "height": "sm"}
+                        ],
+                        "spacing": "sm",
+                        "paddingAll": "13px"
+                    }
+                },
+                {
+                    "type": "bubble",
+                    "size": "micro",
+                    "hero": {
+                        "type": "image",
+                        "url": "https://imgur.com/your_analysis_image.jpg",  # 三大面向
+                        "size": "full",
+                        "aspectMode": "cover",
+                        "aspectRatio": "320:213"
+                    },
+                    "body": {
+                        "type": "box",
+                        "layout": "vertical",
+                        "contents": [
+                            {"type": "text", "text": "三大面向分析", "weight": "bold", "size": "sm", "align": "center"},
+                            {"type": "button", "action": {"type": "message", "label": "查看", "text": f"三大面向分析{stockNumber}"}, "style": "link", "height": "sm"}
+                        ],
+                        "spacing": "sm",
+                        "paddingAll": "13px"
+                    }
+                },
+                {
+                    "type": "bubble",
+                    "size": "micro",
+                    "hero": {
+                        "type": "image",
+                        "url": "https://imgur.com/your_news_image.jpg",  # 新聞
+                        "size": "full",
+                        "aspectMode": "cover",
+                        "aspectRatio": "320:213"
+                    },
+                    "body": {
+                        "type": "box",
+                        "layout": "vertical",
+                        "contents": [
+                            {"type": "text", "text": "新聞", "weight": "bold", "size": "md", "align": "center"},
+                            {"type": "button", "action": {"type": "message", "label": "查看", "text": f"N{stockNumber}"}, "style": "link", "height": "sm"}
+                        ],
+                        "spacing": "sm",
+                        "paddingAll": "13px"
+                    }
+                },
+                {
+                    "type": "bubble",
+                    "size": "micro",
+                    "hero": {
+                        "type": "image",
+                        "url": "https://imgur.com/your_yield_image.jpg",  # 年收益率
+                        "size": "full",
+                        "aspectMode": "cover",
+                        "aspectRatio": "320:213"
+                    },
+                    "body": {
+                        "type": "box",
+                        "layout": "vertical",
+                        "contents": [
+                            {"type": "text", "text": "年收益率", "weight": "bold", "size": "md", "align": "center"},
+                            {"type": "button", "action": {"type": "message", "label": "查看", "text": f"收益率{stockNumber}"}, "style": "link", "height": "sm"}
+                        ],
+                        "spacing": "sm",
+                        "paddingAll": "13px"
+                    }
+                }
+            ]
+        }
+    )
+    return text_message
+    
 # 股票 quick reply(給#代碼指令)
 def stock_reply(stockNumber, content_text):
     text_message = TextSendMessage(
