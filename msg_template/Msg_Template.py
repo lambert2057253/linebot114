@@ -848,7 +848,7 @@ def fin_books():
                     "size": "micro",
                     "hero": {
                         "type": "image",
-                        "url": "",
+                        "url": "https://imgur.com/hUWBRhe.jpg",
                         "aspectMode": "fit",
                         "aspectRatio": "320:213",
                         "size": "full",
@@ -926,7 +926,7 @@ def fin_books():
                     "size": "micro",
                     "hero": {
                         "type": "image",
-                        "url": "",
+                        "url": "https://imgur.com/hUWBRhe.jpg",
                         "size": "full",
                         "aspectMode": "fit",
                         "aspectRatio": "320:213",
@@ -1004,7 +1004,7 @@ def fin_books():
                     "size": "micro",
                     "hero": {
                         "type": "image",
-                        "url": "",
+                        "url": "https://imgur.com/hUWBRhe.jpg",
                         "size": "full",
                         "aspectMode": "fit",
                         "aspectRatio": "320:213",
