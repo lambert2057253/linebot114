@@ -892,7 +892,7 @@ def fin_books():
                             "action": {
                             "type": "uri",
                             "label": "點我觀看",
-                            "uri": " https://www.books.com.tw/products/0011019276?loc=P_0003_004"
+                            "uri": "https://www.books.com.tw/products/0011019276?loc=P_0003_004"
                             }
                         },
                         {
